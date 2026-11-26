@@ -20,39 +20,6 @@
 \subsection{Traffic Sign Datasets and High-Resolution Panoramic Road Imagery}
 Traffic sign detection datasets can be broadly categorized along two dimensions: how the data were collected and what the data describe. In terms of collection, datasets differ in camera sensors, which result in different resolutions (low-resolution crops versus high-resolution panoramic imagery), provenance (real-world captures versus synthetic data), and format (single images versus video sequences). In terms of content, datasets vary by geographic coverage (country-specific collections versus global collections), scene conditions (daytime versus nighttime lighting and weather such as sunny, foggy, or rainy), scene setting (urban versus rural environments), and class granularity (a few broad sign categories versus hundreds of fine-grained sign types). These factors strongly influence how well a model trained on a given dataset generalizes. Because traffic sign designs and road environments differ substantially across countries, we organize our review by geographic coverage and discuss three groups in turn: country-specific datasets from outside Taiwan, global multi-country datasets, and Taiwan-related datasets. Within each group, we compare datasets along the remaining dimensions, and we summarize all of them in Table~\ref{tab:datasets}.
 
-\begin{table*}[t]
-    \centering
-    \caption{Comparison of existing traffic sign detection datasets.}
-    \label{tab:datasets}
-    \setlength{\tabcolsep}{1pt}
-    \begin{tabular}{lcccccc}
-    \hline
-    Dataset & Year & Region & \#Images & \#Instances & \#Classes & Resolution \\
-    \hline
-    STSD~\cite{larsson2011using} & 2011 & Sweden & 20,000 & 3,488 & 7 & $1280\times960$ \\
-    LISA~\cite{mogelmose2012vision} & 2012 & US & 6,610 & 7,855 & 49 & $[640\times480,\ 1024\times522]$ \\
-    GTSDB~\cite{houben2013detection} & 2013 & Germany & 900 & 1206 & 3 & $1360\times800$ \\
-    BelgiumTS~\cite{timofte2014multi} & 2014 & Belgium & 9,006 & 13,444 & 62 & $1628\times1236$ \\
-    TT100K~\cite{zhu2016traffic} & 2016 & China & 100,000$^{*}$ & 30,000 & 221$^{\dagger}$ & $2048\times2048$ \\
-    CURE-TSD-Real~\cite{temel2019traffic} & 2019 & Belgium & 896,700 & 648,186 & 14 & $1628\times1236$ \\
-    DFG~\cite{tabernik2019deep} & 2019 & Slovenia & 6,957 & 13,239 & 200 & $\{720\times576,1920\times1080\}$ \\
-    MTSD~\cite{ertler2020mapillary} & 2020 & Global & 100,000$^{\dagger}$ & 325,172 & 313 & 1--16+\,MP$^{\S}$ \\
-    CCTSDB 2021 & 2022 & China &  &  &  & \\
-    \hline
-    Ours & -- & Taiwan & 11,878 & -- & -- & $8192\times4096$ \\
-    \hline
-    \end{tabular}
-
-    \vspace{5pt}
-    \begin{minipage}{\linewidth}
-        \raggedright
-        \footnotesize $^{*}$Only 10,000 of the 100,000 images contain traffic sign instances.\\
-        \footnotesize $^{\dagger}$Only 45 classes have more than 100 instances.\\
-        \footnotesize $^{\ddagger}$52,453 images are fully annotated; the other 47,547 are partially annotated automatically.\\
-        \footnotesize $^{\S}$Varies by camera; no fixed resolution.
-    \end{minipage}
-\end{table*}
-
 \subsubsection{Country-specific datasets outside Taiwan}
 Swedish Traffic Signs Dataset (STSD)~\cite{larsson2011using} is a real-world video-sequence dataset of Swedish roads, collected with a dashboard-mounted camera of highways and city streets. It contains over 20,000 frames, of which every fifth frame (20\%) is manually annotated, yielding 3,488 labeled traffic signs. Each sign is annotated with a bounding box and one of 7 class labels (pedestrian crossing, designated lane right, no standing or parking, priority road, give way, 50~kph, and 30~kph), together with its visibility status (visible, blurred, or occluded) and road status (the road being traveled or a side road). The data cover daytime summer conditions only, and the authors list night and rain as planned future extensions.
 
@@ -71,9 +38,53 @@ Tsinghua-Tencent 100K (TT100K)~\cite{zhu2016traffic} is a large-scale real-world
 \subsubsection{Global multi-country datasets}
 Mapillary Traffic Sign Dataset (MTSD)~\cite{ertler2020mapillary} is, to our knowledge, the most geographically diverse traffic sign benchmark, built from 100,000 street-level images crowd-sourced through the Mapillary platform. Images were selected with a greedy per-country sampling scheme weighted by a global target distribution over continents (20\% North America, 20\% Europe, 20\% Asia, 15\% South America, 15\% Oceania, 10\% Africa), binned geographically to balance urban and rural areas, and filtered by predicted scene type (city street, highway, residential), camera type, and distance between samples to avoid near-duplicates. The images come from over 200 camera manufacturers and range from about 1 to over 16 megapixels, including 1,138 360-degree panoramas, and cover varied lighting and weather conditions. The dataset has two parts: 52,453 fully annotated images and 47,547 partially annotated neighboring images whose labels were generated automatically, intended for semi-supervised learning. The fully annotated set contains 257,543 bounding boxes covering all sign types, of which 82,724 are assigned to one of 313 fine-grained classes.
 
-\subsubsection{Taiwan-related datasets} TBD
+\subsubsection{Taiwan-related datasets}
+Lu et al.~\cite{lu2022hierarchical} introduced a real-world dataset of Taiwanese traffic signs, built because existing foreign datasets lack Taiwan-specific sign designs and no Taiwanese dataset had been released for download. Images were captured with mobile phone cameras and a GoPro camera mounted inside a car; the phone photos were taken from 10 different angles and distances. It contains 11,074 images spanning 23 sign classes: 8 circular signs (6 prohibitory and 2 mandatory), 14 triangular warning signs, and one sign in an ``other'' category, so the classes also group into three shapes.
 
-In summary, current methods have achieved perfect or near-perfect results for older benchmarks like GTSDB due to their moderate difficulty (only 4 classes)~\cite{zhu2016traffic}. A mutual trend emerges that the majority of existing datasets were collected in a specific country since each country has its own traffic sign system~\cite{ertler2020mapillary}. This means a traffic sign detector that works well on one country is not guaranteed to generalize to another. Some prefer weather condition variability to improve advanced driver-assistance systems, while others~\cite{tabernik2019deep} prioritize simple daytime, clear view for inventory purposes.
+Li and Su~\cite{li2022traffic} collected their own real-world Taiwanese traffic sign dataset to validate their enhanced YOLOv5s6 model, since sign designs differ across regions. The dataset contains 2,364 images spanning 11 classes: Yellow Light, Two-stage Left Turn, Road Sign, Red Light, Watch Out for Children, Green Light, Keep Right, No Left Turn, Speed Measuring Enforcement, Maximum Speed 50, and No Parking.
+
+Taiwan Traffic Sign (TWTS) dataset~\cite{suwattanapunkul2023efficient} is a real-world collection of Taiwanese roads, built because no public Taiwanese traffic sign dataset was available. Images were captured on roads in Taiwan under daytime, nighttime, and rainy conditions. It contains 837 images with 866 manually annotated traffic signs, labeled across 10 classes: keep right, hook left turn for motorcycles, no entry, pass on either side, and speed limits of 30, 40, 50, 60, 80, and 100~km/h.
+
+TWTSDB~\cite{lin2026csformer} is a real-world dataset of Taiwanese roads, introduced to test generalization under domain shift, since sign designs and spatial distributions in driving scenes differ across locations. Images were captured with a windshield-mounted dashcam at $1920\times1080$ resolution, covering four metropolitan areas and highway, urban, and suburban road types. It contains 6,992 single images spanning 98 traffic sign categories.
+
+
+In summary, current methods have achieved perfect or near-perfect results for older benchmarks like GTSDB due to their moderate difficulty (only 4 classes)~\cite{zhu2016traffic}. A mutual trend emerges that the majority of existing datasets were collected in a specific country since each country has its own traffic sign system~\cite{ertler2020mapillary,lu2022hierarchical}. This means a traffic sign detector that works well on one country is not guaranteed to generalize to another. Some prefer weather condition variability to improve advanced driver-assistance systems, while others~\cite{tabernik2019deep} prioritize simple daytime, clear view for inventory purposes. Although several Taiwan-specific traffic sign datasets have been collected and used in prior studies~\cite{chang2024effective,lin2026csformer,lu2022hierarchical,dewi2022deep,suwattanapunkul2023efficient,li2022traffic}, most of them have not been made publicly available, which limits reproducibility and fair comparison across methods.
+
+\begin{table*}[t]
+    \centering
+    \caption{Comparison of existing traffic sign detection datasets.}
+    \label{tab:datasets}
+    \setlength{\tabcolsep}{1pt}
+    \begin{tabular}{lcccccc}
+    \hline
+    Dataset & Year & Region & \#Images & \#Instances & \#Classes & Resolution \\
+    \hline
+    STSD~\cite{larsson2011using} & 2011 & Sweden & 20,000 & 3,488 & 7 & $1280\times960$ \\
+    LISA~\cite{mogelmose2012vision} & 2012 & US & 6,610 & 7,855 & 49 & $[640\times480,\ 1024\times522]$ \\
+    GTSDB~\cite{houben2013detection} & 2013 & Germany & 900 & 1206 & 3 & $1360\times800$ \\
+    BelgiumTS~\cite{timofte2014multi} & 2014 & Belgium & 9,006 & 13,444 & 62 & $1628\times1236$ \\
+    TT100K~\cite{zhu2016traffic} & 2016 & China & 100,000$^{*}$ & 30,000 & 221$^{\dagger}$ & $2048\times2048$ \\
+    CURE-TSD-Real~\cite{temel2019traffic} & 2019 & Belgium & 896,700 & 648,186 & 14 & $1628\times1236$ \\
+    DFG~\cite{tabernik2019deep} & 2019 & Slovenia & 6,957 & 13,239 & 200 & $\{720\times576,1920\times1080\}$ \\
+    MTSD~\cite{ertler2020mapillary} & 2020 & Global & 100,000$^{\dagger}$ & 325,172 & 313 & 1--16+\,MP$^{\S}$ \\
+    Lu et al.~\cite{lu2022hierarchical} & 2022 & Taiwan & 11,074 & -- & 14 & -- \\
+    Li and Su~\cite{li2022traffic} & 2022 & Taiwan & 2,364 & -- & 11 & -- \\
+    TWTS~\cite{suwattanapunkul2023efficient} & 2023 & Taiwan & 837 & 866 & 10 & -- \\
+    TWTSDB~\cite{lin2026csformer} & 2026 & Taiwan & 6,992 & -- & 98 & $1920\times1080$ \\
+    \hline
+    Ours & 2026 & Taiwan & 11,878 & -- & -- & $8192\times4096$ \\
+    \hline
+    \end{tabular}
+
+    \vspace{5pt}
+    \begin{minipage}{\linewidth}
+        \raggedright
+        \footnotesize $^{*}$Only 10,000 of the 100,000 images contain traffic sign instances.\\
+        \footnotesize $^{\dagger}$Only 45 classes have more than 100 instances.\\
+        \footnotesize $^{\ddagger}$52,453 images are fully annotated; the other 47,547 are partially annotated automatically.\\
+        \footnotesize $^{\S}$Varies by camera; no fixed resolution.
+    \end{minipage}
+\end{table*}
 
 \subsection{Deep Learning Approaches for Small Traffic Sign Detection}
 
