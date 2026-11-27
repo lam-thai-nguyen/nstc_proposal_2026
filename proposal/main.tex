@@ -43,7 +43,7 @@ Traffic sign detection datasets can be broadly categorized along two dimensions:
     TWTS~\cite{suwattanapunkul2023efficient} & 2023 & Taiwan & 837 & 866 & 10 & -- \\
     TWTSDB~\cite{lin2026csformer} & 2026 & Taiwan & 6,992 & -- & 98 & $1920\times1080$ \\
     \hline
-    Ours & 2026 & Taiwan & 11,878 & -- & -- & $8192\times4096$ \\
+    TW11K (Ours) & 2026 & Taiwan & 11,878 & 149,690 & 21 & $8192\times4096$ \\
     \hline
     \end{tabular}
 
@@ -90,6 +90,13 @@ In summary, as shown in Table~\ref{tab:datasets}, most existing datasets target 
 
 \section{Methodology}\label{sec:method}
 \subsection{Dataset Development, Annotation, and Characterization}
+\subsubsection{Data collection}
+We collected data with a Mobile Mapping System, a vehicle-mounted platform with three key subsystems: a laser scanner for point clouds, a camera for RGB images, and a Positioning and Orientation System that provides navigation, timing, and trajectory information. Since our dataset targets Taiwanese road infrastructure inspection and management, all images were captured in daytime under clear visibility conditions by a Ladybug5 panoramic camera. It has six fisheye lenses: five pointing sideways and one pointing up. The six images are stitched into a 360° view covering the full horizontal field of view, then projected into a 2:1 panorama through equirectangular projection. Unlike~\cite{zhu2016traffic}, who cropped the top 25\% and bottom 25\% of each panorama on the assumption that objects rarely appear there, we keep all panoramas intact. This lets users choose their own preprocessing. \hl{which city? urban or rural? capture intervals?}
+
+\subsubsection{Data annotation}
+Each object was manually annotated with a bounding box and a class label. In total, our 11,878 images contained 149,690 annotated objects across 21 classes. Following the national sign standard, we grouped Taiwanese traffic signs by function into ten groups: warning, mandatory, restriction, limit, guidance, assistance, barricade, construction, signal, and danger. Within each group, signs were further divided by shape (triangle, circle, rectangle, diamond, or arrow). Each class name therefore combines function and shape, and sign types sharing both are merged into a single class.This yields 21 final classes: warning triangle, warning rectangle, warning others, mandatory triangle, mandatory circle, mandatory rectangle, mandatory others, restriction circle, restriction rectangle, restriction others, limit circle, limit others, guidance rectangle, guidance circle, guidance arrow, guidance others, assistance rectangle, barricade rectangle, construction diamond, signal, and danger.
+
+\subsubsection{Data statistics} instances per class, instance size, distortion
 
 \subsection{Deep Learning Model Development}
 
